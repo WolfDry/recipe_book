@@ -54,8 +54,6 @@ export default {
       ],
       newRecipe: {},
       updateRecipe: {},
-      isUpdate: false,
-      buttonText: 'Add',
       indexEdit: '',
       newIngredient: {},
       shoppingList: [],
@@ -64,25 +62,20 @@ export default {
   },
   methods: {
     addRecipe: function () {
-      if (this.newRecipe === ' ' || this.newRecipe === ' ' || this.newRecipe === undefined)
+      if (this.newRecipe.title === ' ' || this.newRecipe.title === ' ' || this.newRecipe.title === undefined)
         return
-      if (!this.isUpdate) {
-        this.newRecipe = {
-          title: this.newRecipe.title
-        }
-        this.recipes.push(this.newRecipe)
-        this.newRecipe = {}
+      this.newRecipe = {
+        title: this.newRecipe.title,
+        description: '',
+        ingredients: []
       }
-      if (this.isUpdate) {
-        this.recipes[this.indexUpdate].title = this.newRecipe.title
-        this.newRecipe = {}
-        this.buttonText = 'Add'
-        this.isUpdate = false
-      }
+      this.recipes.push(this.newRecipe)
+      this.newRecipe = {}
     },
     deleteRecipe: function (recipe) {
       const newRecipes = this.recipes.filter(element => element != recipe)
       this.recipes = newRecipes
+      this.updateRecipe = {}
     },
     displayEdit: function (index) {
       this.updateRecipe = this.recipes[index]
@@ -116,13 +109,15 @@ export default {
     },
     addShoppingList: function () {
       const ingredients = this.updateRecipe.ingredients
-      for (let index = 0; index < ingredients.length; index++) {
-        const element = ingredients[index];
-        this.shoppingList.push(element)
+      if (ingredients) {
+        for (let index = 0; index < ingredients.length; index++) {
+          const element = ingredients[index];
+          this.shoppingList.push(element)
+        }
       }
     },
     deleteAllShoppingList: function () {
-      this.shoppingList = {}
+      this.shoppingList = []
       this.checkIngredients = []
     },
     checkAll: function () {
@@ -133,20 +128,13 @@ export default {
     },
     deleteCheckIngredients: function () {
       const ingredients = this.checkIngredients
-      const newShoppingList = this.shoppingList.filter(function (value, index) {
-        return !(index in ingredients)
-      })
-      console.log(newShoppingList)
-      this.shoppingList = newShoppingList
-      this.checkIngredients = []
-      // for (let index = 0; index < this.shoppingList.length; index++) {
-      //   for (let count = 0; count < this.checkIngredients.length; count++) {
-      //     const element = this.checkIngredients[count];
-      //     if (index === element)
-      //       console.log('je susi dedean')
-      //     // this.shoppingList.slice(index, 1)
-      //   }
-      // }
+      if (this.shoppingList) {
+        const newShoppingList = this.shoppingList.filter(function (value, index) {
+          return !(index in ingredients)
+        })
+        this.shoppingList = newShoppingList
+        this.checkIngredients = []
+      }
     }
   },
   components: {
@@ -164,7 +152,7 @@ export default {
     <!-- Recipe creation -->
     <form @submit.prevent="addRecipe" className="new-recipe-form">
       <input v-model="newRecipe.title" type=" text" className="recipe-title-input" placeholder="Add a new recipe..." />
-      <button className="recipe-create-button">{{ buttonText }}</button>
+      <button className="recipe-create-button">Add</button>
     </form>
 
     <!-- Recipe book -->
