@@ -1,30 +1,212 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+
+import RecipeBook from './components/RecipeBook.vue'
+
+export default {
+  data() {
+    return {
+      recipes: [
+        {
+          title: 'Winter vegetables soup',
+          description: "A delicious soup made with winter vegetables.It's a great way to use up leftover vegetables.To prepare this soup, you will need a large pot, a knife, a cutting board, a spoon, a ladle, and a vegetable peeler.Peel the carrots and the potatoes.Cut the carrots and the potatoes into small cubes.Cut the onion into small cubes.Cut the celery into small cubes.Cut the leek into small cubes.Cut the garlic into small cubes. ...",
+          ingredients: [
+            {
+              name: '1 onion'
+            },
+            {
+              name: '2 carrots'
+            },
+            {
+              name: '3 potatoes'
+            }
+          ]
+        },
+        {
+          title: 'Burgundy beef stew',
+          description: "A delicious soup made with winter vegetables.It's a great way to use up leftover vegetables.To prepare this soup, you will need a large pot, a knife, a cutting board, a spoon, a ladle, and a vegetable peeler.Peel the carrots and the potatoes.Cut the carrots and the potatoes into small cubes.Cut the onion into small cubes.Cut the celery into small cubes.Cut the leek into small cubes.Cut the garlic into small cubes. ...",
+          ingredients: [
+            {
+              name: '1 onion'
+            },
+            {
+              name: '2 carrots'
+            },
+            {
+              name: '3 potatoes'
+            }
+          ]
+        },
+        {
+          title: 'Nassi goreng',
+          description: "A delicious soup made with winter vegetables.It's a great way to use up leftover vegetables.To prepare this soup, you will need a large pot, a knife, a cutting board, a spoon, a ladle, and a vegetable peeler.Peel the carrots and the potatoes.Cut the carrots and the potatoes into small cubes.Cut the onion into small cubes.Cut the celery into small cubes.Cut the leek into small cubes.Cut the garlic into small cubes. ...",
+          ingredients: [
+            {
+              name: '1 onion'
+            },
+            {
+              name: '2 carrots'
+            },
+            {
+              name: '3 potatoes'
+            }
+          ]
+        },
+      ],
+      newRecipe: {},
+      updateRecipe: {},
+      isUpdate: false,
+      buttonText: 'Add',
+      indexEdit: '',
+      newIngredient: {},
+      shoppingList: [],
+      checkIngredients: []
+    }
+  },
+  methods: {
+    addRecipe: function () {
+      if (this.newRecipe === ' ' || this.newRecipe === ' ' || this.newRecipe === undefined)
+        return
+      if (!this.isUpdate) {
+        this.newRecipe = {
+          title: this.newRecipe.title
+        }
+        this.recipes.push(this.newRecipe)
+        this.newRecipe = {}
+      }
+      if (this.isUpdate) {
+        this.recipes[this.indexUpdate].title = this.newRecipe.title
+        this.newRecipe = {}
+        this.buttonText = 'Add'
+        this.isUpdate = false
+      }
+    },
+    deleteRecipe: function (recipe) {
+      const newRecipes = this.recipes.filter(element => element != recipe)
+      this.recipes = newRecipes
+    },
+    displayEdit: function (index) {
+      this.updateRecipe = this.recipes[index]
+      this.indexEdit = index
+    },
+    editRecipe: function () {
+      this.recipes[this.indexEdit] = this.updateRecipe
+      this.updateRecipe = {}
+    },
+    deleteIngredient: function (ingredient) {
+      const recipe = this.updateRecipe
+      const newIngredients = recipe.ingredients.filter(element => element != ingredient)
+      for (let index = 0; index < this.recipes.length; index++) {
+        const element = this.recipes[index];
+        if (element === recipe) {
+          element.ingredients = newIngredients
+        }
+      }
+    },
+    addIngredient: function () {
+      const recipe = this.updateRecipe
+      if (this.newIngredient.name === ' ' || this.newIngredient.name === ' ' || this.newIngredient.name === undefined || !recipe)
+        return
+      for (let index = 0; index < this.recipes.length; index++) {
+        const element = this.recipes[index];
+        if (element === recipe) {
+          element.ingredients.push(this.newIngredient)
+        }
+      }
+      this.newIngredient = {}
+    },
+    addShoppingList: function () {
+      const ingredients = this.updateRecipe.ingredients
+      for (let index = 0; index < ingredients.length; index++) {
+        const element = ingredients[index];
+        this.shoppingList.push(element)
+      }
+    },
+    deleteAllShoppingList: function () {
+      this.shoppingList = {}
+      this.checkIngredients = []
+    },
+    checkAll: function () {
+      this.checkIngredients = []
+      for (let index = 0; index < this.shoppingList.length; index++) {
+        this.checkIngredients.push(index)
+      }
+    },
+    deleteCheckIngredients: function () {
+      const ingredients = this.checkIngredients
+      const newShoppingList = this.shoppingList.filter(function (value, index) {
+        return !(index in ingredients)
+      })
+      console.log(newShoppingList)
+      this.shoppingList = newShoppingList
+      this.checkIngredients = []
+      // for (let index = 0; index < this.shoppingList.length; index++) {
+      //   for (let count = 0; count < this.checkIngredients.length; count++) {
+      //     const element = this.checkIngredients[count];
+      //     if (index === element)
+      //       console.log('je susi dedean')
+      //     // this.shoppingList.slice(index, 1)
+      //   }
+      // }
+    }
+  },
+  components: {
+    RecipeBook
+  }
+}
+
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
-</template>
+  <div className="main">
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+    <h1 className="main-title">Recipe Book</h1>
+
+    <!-- Recipe creation -->
+    <form @submit.prevent="addRecipe" className="new-recipe-form">
+      <input v-model="newRecipe.title" type=" text" className="recipe-title-input" placeholder="Add a new recipe..." />
+      <button className="recipe-create-button">{{ buttonText }}</button>
+    </form>
+
+    <!-- Recipe book -->
+    <RecipeBook :deleteRecipe="deleteRecipe" :displayEdit="displayEdit" :recipes="recipes" />
+
+    <!-- Recipe edit -->
+    <div className="recipe-edit-form">
+      <input type="text" className="recipe-edit-title-input" v-model="updateRecipe.title" />
+      <textarea rows={10} className="recipe-edit-description-input" v-model="updateRecipe.description" />
+      <h2 className="recipe-ingredients-title">Ingredients</h2>
+      <ul className="recipe-ingredients-list">
+        <li v-for="(ingredient, index) in updateRecipe.ingredients" className="recipe-ingredient">
+          <input type="text" className="recipe-ingredient-input" v-model="ingredient.name" />
+          <button @click="deleteIngredient(ingredient)" className="recipe-ingredient-delete-button">🗑</button>
+        </li>
+        <form @submit.prevent="addIngredient" className="recipe-new-ingredient">
+          <input v-model="newIngredient.name" type="text" className="recipe-new-ingredient-input"
+            placeholder="Add a new ingredient..." />
+          <button className="recipe-new-ingredient-button">Add</button>
+        </form>
+      </ul>
+      <div className="recipe-edit-actions">
+        <button @click="editRecipe" className="recipe-edit-save-button">Save</button>
+        <button @click="addShoppingList" className="recipe-edit-cart-button">Add to shopping list</button>
+      </div>
+    </div>
+    <!--  Shopping list -->
+    <div className="shopping-list">
+      <h2 className="shopping-list-title">Shopping list</h2>
+      <ul className="recipe-ingredients-list">
+        <li v-for="(ingredient, index) in shoppingList" className="recipe-ingredient">
+          <label className="shopping-list-item">
+            <input v-model="checkIngredients" :value="index" type="checkbox" />
+            {{ ingredient.name }}
+          </label>
+        </li>
+      </ul>
+      <div className="shopping-list-actions">
+        <button @click="checkAll" className="shopping-list-clear-button">Check all</button>
+        <button @click="deleteCheckIngredients" className="shopping-list-clear-button">Clear checked items</button>
+        <button @click="deleteAllShoppingList" className="shopping-list-clear-button">Clear all</button>
+      </div>
+    </div>
+  </div>
+</template>
